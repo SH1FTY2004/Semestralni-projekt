@@ -1,0 +1,18 @@
+Bench Press;prsa;
+Pull Ups;záda;
+Lateral Raise;ramena;
+Pec Deck;prsa;
+Bent Over Rows;záda;
+Bicep Curl;biceps;
+Triceps Pushdown;triceps;
+Squat;nohy;
+Overhead Press;ramena;
+Romanian Deadlift;nohy;
+Crunch;břicho;
+Hanging Leg Raise;břicho;
+Hammer Curl;biceps;
+Triceps Dip;triceps;
+Chest fly;prsa;
+Sit Up;břicho;
+Seated Row;záda;
+Hax Squat;nohy;

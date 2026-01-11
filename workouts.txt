@@ -1,0 +1,14 @@
+
+=== WORKOUT ===
+Bench Press (prsa):
+  1. serie: 50 kg, 15 opakovani;
+  2. serie: 90 kg, 4 opakovani;
+  3. serie: 90 kg, 4 opakovani;
+Bent Over Rows (záda):
+  1. serie: 90 kg, 8 opakovani;
+  2. serie: 90 kg, 8 opakovani;
+  3. serie: 90 kg, 6 opakovani;
+Overhead Press (ramena):
+  1. serie: 50 kg, 8 opakovani;
+  2. serie: 50 kg, 8 opakovani;
+  3. serie: 50 kg, 6 opakovani;
