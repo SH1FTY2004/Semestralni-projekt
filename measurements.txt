@@ -1,0 +1,7 @@
+weight=80
+height=175
+age=21
+chest=110
+waist=80
+arms=41
+thighs=60

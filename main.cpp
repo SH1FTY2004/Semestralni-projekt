@@ -9,6 +9,129 @@ struct Muscle {
     string name;
 };
 
+struct Measurements {
+    float weight;
+    int height;
+    int age;
+    float chest;
+    float waist;
+    float arms;
+    float thighs;
+};
+
+
+
+void saveMeasurements(const Measurements& m) {
+    ofstream file("measurements.txt");
+
+    if (!file.is_open()) {
+        cout << "Nelze otevrit measurements.txt\n";
+        return;
+    }
+
+    file << "weight=" << m.weight << "\n";
+    file << "height=" << m.height << "\n";
+    file << "age=" << m.age << "\n";
+    file << "chest=" << m.chest << "\n";
+    file << "waist=" << m.waist << "\n";
+    file << "arms=" << m.arms << "\n";
+    file << "thighs=" << m.thighs << "\n";
+
+    file.close();
+}
+
+
+void loadMeasurements(Measurements& m) {
+    ifstream file("measurements.txt");
+
+    if (!file.is_open()) {
+        // default hodnoty
+        m.weight = 0;
+        m.height = 0;
+        m.age = 0;
+        m.chest = 0;
+        m.waist = 0;
+        m.arms = 0;
+        m.thighs = 0;
+        return;
+    }
+
+    string line;
+    while (getline(file, line)) {
+        size_t pos = line.find('=');
+        if (pos == string::npos) continue;
+
+        string key = line.substr(0, pos);
+        string value = line.substr(pos + 1);
+
+        if (key == "weight") m.weight = stof(value);
+        else if (key == "height") m.height = stoi(value);
+        else if (key == "age") m.age = stoi(value);
+        else if (key == "chest") m.chest = stoi(value);
+        else if (key == "waist") m.waist = stoi(value);
+        else if (key == "arms") m.arms = stoi(value);
+        else if (key == "thighs") m.thighs = stoi(value);
+    }
+
+    file.close();
+}
+
+void manageMeasurements(Measurements& m) {
+    loadMeasurements(m);
+    
+    int volba = -1;
+
+    cout << "\nAktualni telesne udaje:\n";
+    cout << "Vaha (kg): " << m.weight << "\n";
+    cout << "Vyska (cm): " << m.height << "\n";
+    cout << "Vek: " << m.age << "\n";
+    cout << "Hrudnik (cm): " << m.chest << "\n";
+    cout << "Pas (cm): " << m.waist << "\n";
+    cout << "Ruce (cm): " << m.arms << "\n";
+    cout << "Stehna (cm): " << m.thighs << "\n\n";
+
+    cout << "Zadej nove hodnoty (0 pro ponechani aktualni hodnoty):\n";
+    cin >> volba;
+
+    if (volba == 0) {
+
+        cout << "Zadane hodnoty ponechany.\n\n";
+    } else {
+        float inputFloat;
+        int inputInt;
+
+        cout << "Vaha (kg): ";
+        cin >> inputFloat;
+        if (inputFloat != 0) m.weight = inputFloat;
+
+        cout << "Vyska (cm): ";
+        cin >> inputInt;
+        if (inputInt != 0) m.height = inputInt;
+
+        cout << "Vek: ";
+        cin >> inputInt;
+        if (inputInt != 0) m.age = inputInt;
+
+        cout << "Hrudnik (cm): ";
+        cin >> inputFloat;
+        if (inputFloat != 0) m.chest = inputFloat;
+
+        cout << "Pas (cm): ";
+        cin >> inputFloat;
+        if (inputFloat != 0) m.waist = inputFloat;
+
+        cout << "Ruce (cm): ";
+        cin >> inputFloat;
+        if (inputFloat != 0) m.arms = inputFloat;
+
+        cout << "Stehna (cm): ";
+        cin >> inputFloat;
+        if (inputFloat != 0) m.thighs = inputFloat;
+
+        saveMeasurements(m);
+        cout << "Telesne udaje ulozeny.\n\n";
+    }
+}
 
 class Exercise {
 private:
@@ -19,11 +142,11 @@ private:
 
 
 public:
-    Exercise() {} // prázdný konstruktor
+    Exercise() {} 
 
     Exercise(string n, Muscle p) : name(n), primary(p) {}
 
-    // Settery
+    
     void setName(string n) { name = n; }
     void setPrimary(Muscle p) { primary = p; }
     void addSecondary(Muscle m) {
@@ -34,7 +157,6 @@ public:
         }
     }
 
-    // Gettery
     string getName() const { return name; }
     Muscle getPrimary() const { return primary; }
 
@@ -44,12 +166,12 @@ public:
 
 class ExerciseDatabase {
 private:
-    Exercise exercises[200];   // jednoduché pole
-    int count = 0;             // kolik cviků máme
+    Exercise exercises[200];   
+    int count = 0;             
 
 public:
 
-    // Přidání cviku
+    
     void addExercise(const Exercise& e) {
         if (count < 200) {
             exercises[count++] = e;
@@ -58,7 +180,7 @@ public:
         }
     }
 
-    // Najít cvik podle názvu
+    
     Exercise* findByName(const string& name) {
         for (int i = 0; i < count; i++) {
             if (exercises[i].getName() == name) {
@@ -68,14 +190,14 @@ public:
         return nullptr;
     }
 
-    // Vypsat všechny cviky
+    
     void printAllByMuscle() const {
     if (count == 0) {
         cout << "Zadne cviky nejsou ulozeny.\n";
         return;
     }
 
-    // 1. Nejprve najdeme všechny unikatní svaly
+    
     string muscles[100];
     int muscleCount = 0;
 
@@ -95,7 +217,7 @@ public:
         }
     }
 
-    // 2. Pro každý sval vypíšeme odpovídající cviky
+    
     for (int i = 0; i < muscleCount; i++) {
         cout << muscles[i] << ":\n";
 
@@ -110,7 +232,7 @@ public:
 }
 
 
-    // Interaktivní přidání cviku
+    
     void addExerciseInteractive() {
     cin.ignore(numeric_limits<streamsize>::max(), '\n'); // ← KLÍČOVÝ ŘÁDEK
 
@@ -157,7 +279,7 @@ public:
 }
 
 
-    // Načti cviky ze souboru
+    
     void loadFromFile(const string& filename) {
     ifstream file(filename);
     if (!file.is_open()) {
@@ -191,7 +313,7 @@ public:
     file.close();
 }
 
-    // Odstranění cviku z databáze i souboru
+    
     void removeExercise(const string& filename = "exercise.txt") {
         bool found = false;
 
@@ -246,7 +368,7 @@ struct ExerciseEntry {
     int sets;
 };
 
-// ================= WORKOUT =================
+
 class Workout {
 private:
     ExerciseEntry entries[20];
@@ -261,26 +383,33 @@ public:
         }
     }
 
-    void print() const {
-    
-        if (count == 0) {
-            cout << "Workout je prazdny.\n";
-            return;
-        }
 
-        cout << "\n=== WORKOUT ===\n";
-        for (int i = 0; i < count; i++) {
-            cout << "- " << entries[i].exercise.getName()
-                 << " (" << entries[i].exercise.getPrimary().name << ") "
-                 << entries[i].weight << " kg, "
-                 << entries[i].sets << "x" << entries[i].reps << endl;
-        }
+    void print() const {
+
+    if (count == 0) {
+        cout << "Workout je prazdny.\n";
+        return;
     }
 
-    // Uložení workoutu do souboru
+    cout << "\n=== WORKOUT ===\n";
+
+    for (int i = 0; i < count; i++) {
+        cout << "- " << entries[i].exercise.getName()
+             << " (" << entries[i].exercise.getPrimary().name << ")\n";
+
+        for (int s = 0; s < entries[i].sets; s++) {
+            cout << "  " << (s + 1) << ". serie: "
+                 << entries[i].weight[s] << " kg, "
+                 << entries[i].reps[s] << " opakovani\n\n";
+        }
+    }
+}
+
+
+    
     void saveToFile() const {
     string filename = "workouts.txt";
-    ofstream file(filename, ios::app); // přidá na konec
+    ofstream file(filename, ios::app); 
     if (!file.is_open()) {
         cout << "Nepodarilo se otevrit soubor.\n";
         return;
@@ -300,15 +429,15 @@ public:
     }
 
     file.close();
-    cout << "Workout ulozen do souboru " << filename << "\n";
+    cout << "Workout ulozen do souboru " << filename << "\n\n";
 }
 
 
-    // Interaktivní vytvoření workoutu
-     void createInteractive(ExerciseDatabase& db) {
+   
+    void createInteractive(ExerciseDatabase& db, const Measurements& user) {
     while (true) {
         string name;
-        cout << "Zadej nazev cviku (0 pro konec): ";
+        cout << "\nZadej nazev cviku (0 pro konec): ";
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
         getline(cin, name);
         if (name == "0") break;
@@ -324,18 +453,104 @@ public:
 
         cout << "Pocet serii: ";
         cin >> entry.sets;
+        cout << "\n";
+        
+        if (entry.sets > 20) entry.sets = 20;
+
+        float addWeight = 0.0f;
+
+        
+        bool bodyweightExercise = (name == "Pull Ups" || name == "Triceps Dip");
+        if (bodyweightExercise) {
+            cout << "Tento cvik se počítá s vlastní vahou (" << user.weight << " kg).\n";
+            cout << "Zadej přídavnou váhu (0 pokud žádná): ";
+            cin >> addWeight;
+            cout << "\n";
+        }
 
         for (int s = 0; s < entry.sets; s++) {
             cout << (s + 1) << ". serie:\n";
-            cout << "  Vaha (kg): ";
-            cin >> entry.weight[s];
-            cout << "  Opakovani: ";
+
+            if (!bodyweightExercise) {
+                cout << "Vaha (kg): ";
+                cin >> entry.weight[s];
+            } else {
+            
+                entry.weight[s] = user.weight + addWeight;
+                cout << "Vaha (kg): " << entry.weight[s] << " (vlastní + pridavna)\n";
+            }
+
+            cout << "Opakovani: ";
             cin >> entry.reps[s];
+            cout << "\n";
         }
 
-        addExercise(entry); // uložíme celý cvik se všemi sériemi do paměti
+        addExercise(entry);
+        cout << "Cvik pridan do workoutu.\n";
     }
 }
+
+
+    void printStats() const {
+    if (count == 0) {
+        cout << "Workout je prazdny.\n";
+        return;
+    }
+
+    string muscles[50];
+    float totalWeight[50] = {0};
+    int totalSets[50] = {0};
+    int muscleCount = 0;
+
+    float workoutTotalWeight = 0;
+    int workoutTotalSets = 0;
+
+    for (int i = 0; i < count; i++) {
+        const ExerciseEntry& e = entries[i];
+        string muscleName = e.exercise.getPrimary().name;
+
+        // najdi index svalu
+        int index = -1;
+        for (int j = 0; j < muscleCount; j++) {
+            if (muscles[j] == muscleName) {
+                index = j;
+                break;
+            }
+        }
+
+        if (index == -1) {
+            index = muscleCount;
+            muscles[muscleCount++] = muscleName;
+        }
+
+        // Přičti série
+        totalSets[index] += e.sets;
+        workoutTotalSets += e.sets;
+
+        // Přičti celkovou váhu (váha * opakování * série)
+        // Přičti váhu všech sérií pro tento cvik
+        float lifted = 0;
+        for (int s = 0; s < e.sets; s++) {
+            lifted += e.weight[s] * e.reps[s];
+        }
+        totalWeight[index] += lifted;
+        workoutTotalWeight += lifted;
+
+    }
+
+    // Výpis statistik
+    cout << "\n=== STATISTIKY WORKOUTU ===\n";
+    for (int i = 0; i < muscleCount; i++) {
+        cout << muscles[i] << ":\n";
+        cout << "  Serie: " << totalSets[i] << "\n";
+        cout << "  Zvednuto: " << totalWeight[i] << " kg\n\n";
+    }
+
+    cout << "=== CELKEM ===\n";
+    cout << "Serie celkem: " << workoutTotalSets << "\n";
+    cout << "Zvednuto celkem: " << workoutTotalWeight << " kg\n\n";
+}
+
 
 
 };
@@ -352,8 +567,9 @@ int main() {
         cout << "2. Přidat nový cvik\n";
         cout << "3. Odstranit cvik\n";
         cout << "4. Vytvořit trénink\n";
-        cout << "5. Historie tréninků\n";
-        cout << "6. Nejlepší výkony\n";
+        //cout << "5. Historie tréninků\n";
+        //cout << "6. Nejlepší výkony\n";
+        cout << "7. Nastavení tělesných údajů\n";
         cout << "0. Konec\n";
         cout << "Vyber: ";
         cin >> choice;
@@ -368,19 +584,30 @@ int main() {
                 break;
 
             case 3: 
-                db.removeExercise(); // odstraní cvik z paměti i ze souboru
+                db.removeExercise(); 
                 break;
 
             case 4:
-                w.createInteractive(db);
+                Measurements user;
+                loadMeasurements(user);
+                w.createInteractive(db, user);
                 w.print();
+                w.printStats();
                 w.saveToFile();
                 break;
 
             case 5:
                 
                  break;
-            case 0:
+            case 6:
+            
+                break;
+
+            case 7: 
+                Measurements m;
+                manageMeasurements(m);
+                break;
+
                 return 0;
 
             default:
