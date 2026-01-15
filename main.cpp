@@ -595,57 +595,55 @@ public:
     }
 
 
-    static void deleteWorkoutByNumber(int number, const string& filename = "workouts.txt") {
-        ifstream file(filename);
-        if (!file.is_open()) {
-            cout << "Soubor s treninky neexistuje.\n";
-            return;
-        }
-
-        vector<string> lines;
-        string line;
-        while (getline(file, line)) {
-            lines.push_back(line);
-        }
-        file.close();
-
-        string startTag = "=== WORKOUT " + to_string(number) + " ===";
-        string nextTag  = "=== WORKOUT " + to_string(number + 1) + " ===";
-
-        vector<string> output;
-        bool skip = false;
-        bool found = false;
-
-        for (size_t i = 0; i < lines.size(); i++) {
-            if (lines[i] == startTag) {
-                skip = true;
-                found = true;
-                continue;
-            }
-
-            if (skip && lines[i].find("=== WORKOUT") != string::npos) {
-                skip = false;
-            }
-
-            if (!skip) {
-                output.push_back(lines[i]);
-            }
-        }
-
-        if (!found) {
-            cout << "Workout s timto cislem neexistuje.\n";
-            return;
-        }
-
-        ofstream out(filename);
-        for (const string& l : output) {
-            out << l << "\n";
-        }
-        out.close();
-
-        cout << "Workout #" << number << " byl odstraněn.\n";
+    void deleteWorkoutByNumber(int number, const string& filename = "workouts.txt") {
+    ifstream file(filename);
+    if (!file.is_open()) {
+        cout << "Soubor s treninky neexistuje.\n";
+        return;
     }
 
+    vector<string> lines;
+    string line;
+    while (getline(file, line)) {
+        lines.push_back(line);
+    }
+    file.close();
+
+    
+    vector<int> workoutStartIndices;
+    for (size_t i = 0; i < lines.size(); i++) {
+        if (lines[i].find("=== WORKOUT") != string::npos) {
+            workoutStartIndices.push_back(i);
+        }
+    }
+
+    if (number < 1 || number > workoutStartIndices.size()) {
+        cout << "Workout s timto cislem neexistuje.\n";
+        return;
+    }
+
+    
+    int start = workoutStartIndices[number - 1];
+    int end = (number < workoutStartIndices.size()) ? workoutStartIndices[number] : lines.size();
+    lines.erase(lines.begin() + start, lines.begin() + end);
+
+    
+    int workoutCounter = 1;
+    for (size_t i = 0; i < lines.size(); i++) {
+        if (lines[i].find("=== WORKOUT") != string::npos) {
+            lines[i] = "=== WORKOUT " + to_string(workoutCounter++) + " ===";
+        }
+    }
+
+    
+    ofstream out(filename);
+    for (const string& l : lines) {
+        out << l << "\n";
+    }
+    out.close();
+
+    cout << "Workout #" << number << " byl odstraněn a ostatní workouty byly přečíslovány.\n";
+}
 
     void clear() {
     count = 0;
@@ -708,16 +706,17 @@ int main() {
                 manageMeasurements(m);
                 break;
             case 8: {
-                w.printHistory();
+                w.printHistory();  
                 int num;
                 cout << "Zadej cislo workoutu ke smazani: ";
                 cin >> num;
                 w.deleteWorkoutByNumber(num);
+                cout << "\nAktualizovana historie workoutu:\n";
+                w.printHistory();
                 break;
-}
-
+                }
                 return 0;
-
+                
             default:
                 cout << "Neplatná volba!\n";
         }

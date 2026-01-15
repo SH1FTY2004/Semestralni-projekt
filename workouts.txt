@@ -1,10 +1,11 @@
 
-=== WORKOUT 2 ===
-Pull Ups (záda):
-  1. serie: 110 kg, 6 opakovani
-  2. serie: 110 kg, 6 opakovani
-  3. serie: 110 kg, 4 opakovani
-Triceps Dip (triceps):
-  1. serie: 96 kg, 12 opakovani
-  2. serie: 96 kg, 12 opakovani
-  3. serie: 96 kg, 12 opakovani
+
+=== WORKOUT 1 ===
+Overhead Press (ramena):
+  1. serie: 50 kg, 8 opakovani
+  2. serie: 50 kg, 8 opakovani
+  3. serie: 80 kg, 1 opakovani
+Triceps Pushdown (triceps):
+  1. serie: 50 kg, 12 opakovani
+  2. serie: 50 kg, 12 opakovani
+  3. serie: 50 kg, 12 opakovani
