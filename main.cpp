@@ -854,12 +854,10 @@ while (choice != 0) {
         break;
     }
 
-    // ===== ACHIEVEMENTS =====
     case 3:
         printAchievements();
         break;
 
-    // ===== MEASUREMENTS =====
     case 4: {
         Measurements m;
         manageMeasurements(m);
