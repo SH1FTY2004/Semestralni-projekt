@@ -3,6 +3,8 @@
 #include <vector>
 #include <fstream>
 #include <limits>
+#include <map>
+#include <sstream>
 using namespace std;
 
 struct Muscle {
@@ -524,7 +526,7 @@ public:
         const ExerciseEntry& e = entries[i];
         string muscleName = e.exercise.getPrimary().name;
 
-        // najdi index svalu
+        
         int index = -1;
         for (int j = 0; j < muscleCount; j++) {
             if (muscles[j] == muscleName) {
@@ -538,12 +540,11 @@ public:
             muscles[muscleCount++] = muscleName;
         }
 
-        // Přičti série
+       
         totalSets[index] += e.sets;
         workoutTotalSets += e.sets;
 
-        // Přičti celkovou váhu (váha * opakování * série)
-        // Přičti váhu všech sérií pro tento cvik
+       
         float lifted = 0;
         for (int s = 0; s < e.sets; s++) {
             lifted += e.weight[s] * e.reps[s];
@@ -553,7 +554,7 @@ public:
 
     }
 
-    // Výpis statistik
+    
     cout << "\n=== STATISTIKY WORKOUTU ===\n";
     for (int i = 0; i < muscleCount; i++) {
         cout << muscles[i] << ":\n";
@@ -649,7 +650,112 @@ public:
     count = 0;
 }
 
+int getCount() const { return count; }
+const ExerciseEntry& getEntry(int i) const { return entries[i]; }
+
 };
+
+struct Achievement {
+    string exerciseName;
+    float maxWeight=0;
+    float maxVolume=0;
+    float oneRM=0;
+};
+
+
+float calculate1RM(float weight, int reps) {
+    return weight * (1.0f + reps / 30.0f);
+}
+
+
+void rebuildAchievementsFromHistory(const string& workoutsFile = "workouts.txt",
+                                    const string& achievementsFile = "achievements.txt") {
+    ifstream file(workoutsFile);
+    if (!file.is_open()) {
+        cout << "Nelze otevrit " << workoutsFile << "\n";
+        return;
+    }
+
+    map<string, Achievement> stats;
+    string line;
+    string currentExercise;
+
+    while (getline(file, line)) {
+        // řádek s názvem cviku: "Bench Press (Chest):"
+        if (line.find("(") != string::npos && line.find("):") != string::npos) {
+            currentExercise = line.substr(0, line.find(" ("));
+            continue;
+        }
+
+        // řádek série: " 1. serie: 80 kg, 10 opakovani"
+        if (line.find("serie:") != string::npos && !currentExercise.empty()) {
+            float weight = 0;
+            int reps = 0;
+
+            string data = line.substr(line.find(":") + 1);
+
+            // odstraníme znaky kromě číslic, tečky a mezer
+            for (char& c : data) {
+                if (!isdigit(c) && c != '.' && c != ' ')
+                    c = ' ';
+            }
+
+            stringstream ss(data);
+            ss >> weight >> reps;
+
+            Achievement& a = stats[currentExercise];
+
+            // max váha
+            a.maxWeight = max(a.maxWeight, weight);
+
+            // max volume (váha * opakování)
+            float volume = weight * reps;
+            a.maxVolume = max(a.maxVolume, volume);
+
+            // 1RM podle Epley
+            float oneRM = weight * (1.0f + reps / 30.0f);
+            a.oneRM = max(a.oneRM, oneRM);
+        }
+    }
+
+    file.close();
+
+    // přepis achievements.txt
+    ofstream out(achievementsFile);
+    if (!out.is_open()) {
+        cout << "Nelze otevrit " << achievementsFile << "\n";
+        return;
+    }
+
+    for (const auto& pair : stats) {
+        out << "=== " << pair.first << " ===\n";
+        out << "MaxWeight=" << pair.second.maxWeight << "\n";
+        out << "MaxVolume=" << pair.second.maxVolume << "\n";
+        out << "1RM=" << pair.second.oneRM << "\n\n";
+    }
+
+    out.close();
+    cout << "Achievements byly prepocitany.\n";
+}
+
+
+void printAchievements(const string& filename = "achievements.txt") {
+    ifstream file(filename);
+    if (!file.is_open()) {
+        cout << "Soubor s achievements neexistuje.\n";
+        return;
+    }
+
+    cout << "\n=== ACHIEVEMENTS ===\n\n";
+
+    string line;
+    while (getline(file, line)) {
+        cout << line << endl;
+    }
+
+    file.close();
+}
+
 
 int main() {
     Workout w;
@@ -657,68 +763,116 @@ int main() {
     db.loadFromFile("exercise.txt");
     int choice = -1;
 
-    while (choice != 0) {
-        cout << "=== MENU ===\n";
-        cout << "1. Vypsat všechny cviky\n";
-        cout << "2. Přidat nový cvik\n";
-        cout << "3. Odstranit cvik\n";
-        cout << "4. Vytvořit trénink\n";
-        cout << "5. Historie tréninků\n";
-        //cout << "6. Nejlepší výkony\n";
-        cout << "7. Nastavení tělesných údajů\n";
-        cout << "8. Odstranit trénink\n";
-        cout << "0. Konec\n";
-        cout << "Vyber: ";
-        cin >> choice;
 
-        switch (choice) {
+while (choice != 0) {
+    cout << "\n=== HLAVNI MENU ===\n";
+    cout << "[1] Cviky\n";
+    cout << "[2] Treninky\n";
+    cout << "[3] Nejlepsi vykony\n";
+    cout << "[4] Nastaveni telesnych udaju\n";
+    cout << "[0] Konec\n";
+    cout << "Vyber: ";
+    cin >> choice;
+
+    switch (choice) {
+
+    // ===== CVIKY =====
+    case 1: {
+        int sub = -1;
+        while (sub != 0) {
+            cout << "\n=== CVIKY ===\n";
+            cout << "[1] Vypsat vsechny cviky\n";
+            cout << "[2] Pridat novy cvik\n";
+            cout << "[3] Odstranit cvik\n";
+            cout << "[0] Zpet\n";
+            cout << "Vyber: ";
+            cin >> sub;
+
+            switch (sub) {
             case 1:
                 db.printAllByMuscle();
                 break;
-
             case 2:
                 db.addExerciseInteractive();
                 break;
-
-            case 3: 
-                db.removeExercise(); 
+            case 3:
+                db.removeExercise();
                 break;
+            case 0:
+                break;
+            default:
+                cout << "Neplatna volba!\n";
+            }
+        }
+        break;
+    }
 
-            case 4:
+    // ===== TRENINKY =====
+    case 2: {
+        int sub = -1;
+        while (sub != 0) {
+            cout << "\n=== TRENINKY ===\n";
+            cout << "[1] Vytvorit trenink\n";
+            cout << "[2] Historie treninku\n";
+            cout << "[3] Odstranit trenink\n";
+            cout << "[0] Zpet\n";
+            cout << "Vyber: ";
+            cin >> sub;
+
+            switch (sub) {
+            case 1: {
                 Measurements user;
                 loadMeasurements(user);
                 w.createInteractive(db, user);
                 w.print();
                 w.printStats();
+                rebuildAchievementsFromHistory();
                 w.saveToFile();
                 w.clear();
                 break;
-
-            case 5:
+            }
+            case 2:
                 w.printHistory();
-                 break;
-            case 6:
-            
                 break;
-
-            case 7: 
-                Measurements m;
-                manageMeasurements(m);
-                break;
-            case 8: {
-                w.printHistory();  
+            case 3: {
+                w.printHistory();
                 int num;
                 cout << "Zadej cislo workoutu ke smazani: ";
                 cin >> num;
                 w.deleteWorkoutByNumber(num);
+                rebuildAchievementsFromHistory();
                 cout << "\nAktualizovana historie workoutu:\n";
                 w.printHistory();
                 break;
-                }
-                return 0;
-                
+            }
+            case 0:
+                break;
             default:
-                cout << "Neplatná volba!\n";
+                cout << "Neplatna volba!\n";
+            }
         }
+        break;
     }
+
+    // ===== ACHIEVEMENTS =====
+    case 3:
+        printAchievements();
+        break;
+
+    // ===== MEASUREMENTS =====
+    case 4: {
+        Measurements m;
+        manageMeasurements(m);
+        break;
+    }
+
+    case 0:
+        cout << "Konec programu.\n";
+        break;
+
+    default:
+        cout << "Neplatna volba!\n";
+    }
+}
+
 }

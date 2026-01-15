@@ -1,11 +1,20 @@
 
-
 === WORKOUT 1 ===
-Overhead Press (ramena):
-  1. serie: 50 kg, 8 opakovani
-  2. serie: 50 kg, 8 opakovani
-  3. serie: 80 kg, 1 opakovani
-Triceps Pushdown (triceps):
-  1. serie: 50 kg, 12 opakovani
-  2. serie: 50 kg, 12 opakovani
-  3. serie: 50 kg, 12 opakovani
+Bench Press (prsa):
+  1. serie: 110 kg, 10 opakovani
+  2. serie: 110 kg, 10 opakovani
+  3. serie: 110 kg, 10 opakovani
+Pull Ups (záda):
+  1. serie: 130 kg, 12 opakovani
+  2. serie: 130 kg, 12 opakovani
+  3. serie: 130 kg, 12 opakovani
+
+=== WORKOUT 2 ===
+Bench Press (prsa):
+  1. serie: 120 kg, 12 opakovani
+  2. serie: 12 kg, 12 opakovani
+  3. serie: 120 kg, 12 opakovani
+Pull Ups (záda):
+  1. serie: 140 kg, 12 opakovani
+  2. serie: 140 kg, 12 opakovani
+  3. serie: 140 kg, 12 opakovani
