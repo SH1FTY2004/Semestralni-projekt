@@ -19,7 +19,21 @@ struct Measurements {
     float thighs;
 };
 
+int countWorkoutsInFile(const string& filename = "workouts.txt") {
+        ifstream file(filename);
+        if (!file.is_open()) return 0;
 
+        string line;
+        int count = 0;
+        while (getline(file, line)) {
+            if (line.find("=== WORKOUT") != string::npos) {
+                count++;
+            }
+        }
+
+        file.close();
+        return count;
+    }
 
 void saveMeasurements(const Measurements& m) {
     ofstream file("measurements.txt");
@@ -280,7 +294,7 @@ public:
 
 
     
-    void loadFromFile(const string& filename) {
+    void loadFromFile(const string& filename = "exercise.txt") {
     ifstream file(filename);
     if (!file.is_open()) {
         cout << "Nepodarilo se otevrit soubor " << filename << "\n";
@@ -406,34 +420,35 @@ public:
 }
 
 
-    
     void saveToFile() const {
     string filename = "workouts.txt";
-    ofstream file(filename, ios::app); 
+
+    int workoutNumber = countWorkoutsInFile(filename) + 1;
+
+    ofstream file(filename, ios::app);
     if (!file.is_open()) {
         cout << "Nepodarilo se otevrit soubor.\n";
         return;
     }
 
-    file << "\n=== WORKOUT ===\n";
+    file << "\n=== WORKOUT " << workoutNumber << " ===\n";
 
     for (int i = 0; i < count; i++) {
-        file << entries[i].exercise.getName() 
+        file << entries[i].exercise.getName()
              << " (" << entries[i].exercise.getPrimary().name << "):\n";
 
         for (int s = 0; s < entries[i].sets; s++) {
             file << "  " << (s + 1) << ". serie: "
                  << entries[i].weight[s] << " kg, "
-                 << entries[i].reps[s] << " opakovani;\n";
+                 << entries[i].reps[s] << " opakovani\n";
         }
     }
 
     file.close();
-    cout << "Workout ulozen do souboru " << filename << "\n\n";
+    cout << "Workout #" << workoutNumber << " ulozen.\n\n";
 }
 
 
-   
     void createInteractive(ExerciseDatabase& db, const Measurements& user) {
     while (true) {
         string name;
@@ -552,6 +567,89 @@ public:
 }
 
 
+    static void printHistory(const string& filename = "workouts.txt") {
+        ifstream file(filename);
+
+        if (!file.is_open()) {
+            cout << "Historie treninku neexistuje.\n";
+            return;
+        }
+
+        cout << "\n=== HISTORIE TRENINKU ===\n\n";
+
+        string line;
+        bool empty = true;
+
+        while (getline(file, line)) {
+            cout << line << "\n";
+            empty = false;
+        }
+
+        if (empty) {
+            cout << "Zadne treninky zatim nejsou ulozeny.\n";
+        }
+
+        cout << "\n========================\n";
+
+        file.close();
+    }
+
+
+    static void deleteWorkoutByNumber(int number, const string& filename = "workouts.txt") {
+        ifstream file(filename);
+        if (!file.is_open()) {
+            cout << "Soubor s treninky neexistuje.\n";
+            return;
+        }
+
+        vector<string> lines;
+        string line;
+        while (getline(file, line)) {
+            lines.push_back(line);
+        }
+        file.close();
+
+        string startTag = "=== WORKOUT " + to_string(number) + " ===";
+        string nextTag  = "=== WORKOUT " + to_string(number + 1) + " ===";
+
+        vector<string> output;
+        bool skip = false;
+        bool found = false;
+
+        for (size_t i = 0; i < lines.size(); i++) {
+            if (lines[i] == startTag) {
+                skip = true;
+                found = true;
+                continue;
+            }
+
+            if (skip && lines[i].find("=== WORKOUT") != string::npos) {
+                skip = false;
+            }
+
+            if (!skip) {
+                output.push_back(lines[i]);
+            }
+        }
+
+        if (!found) {
+            cout << "Workout s timto cislem neexistuje.\n";
+            return;
+        }
+
+        ofstream out(filename);
+        for (const string& l : output) {
+            out << l << "\n";
+        }
+        out.close();
+
+        cout << "Workout #" << number << " byl odstraněn.\n";
+    }
+
+
+    void clear() {
+    count = 0;
+}
 
 };
 
@@ -567,9 +665,10 @@ int main() {
         cout << "2. Přidat nový cvik\n";
         cout << "3. Odstranit cvik\n";
         cout << "4. Vytvořit trénink\n";
-        //cout << "5. Historie tréninků\n";
+        cout << "5. Historie tréninků\n";
         //cout << "6. Nejlepší výkony\n";
         cout << "7. Nastavení tělesných údajů\n";
+        cout << "8. Odstranit trénink\n";
         cout << "0. Konec\n";
         cout << "Vyber: ";
         cin >> choice;
@@ -594,10 +693,11 @@ int main() {
                 w.print();
                 w.printStats();
                 w.saveToFile();
+                w.clear();
                 break;
 
             case 5:
-                
+                w.printHistory();
                  break;
             case 6:
             
@@ -607,6 +707,14 @@ int main() {
                 Measurements m;
                 manageMeasurements(m);
                 break;
+            case 8: {
+                w.printHistory();
+                int num;
+                cout << "Zadej cislo workoutu ke smazani: ";
+                cin >> num;
+                w.deleteWorkoutByNumber(num);
+                break;
+}
 
                 return 0;
 

@@ -1,28 +1,10 @@
 
-=== WORKOUT ===
-Bench Press (prsa):
-  1. serie: 50 kg, 15 opakovani;
-  2. serie: 90 kg, 4 opakovani;
-  3. serie: 90 kg, 4 opakovani;
-Bent Over Rows (záda):
-  1. serie: 90 kg, 8 opakovani;
-  2. serie: 90 kg, 8 opakovani;
-  3. serie: 90 kg, 6 opakovani;
-Overhead Press (ramena):
-  1. serie: 50 kg, 8 opakovani;
-  2. serie: 50 kg, 8 opakovani;
-  3. serie: 50 kg, 6 opakovani;
-
-=== WORKOUT ===
-Hax Squat (nohy):
-  1. serie: 80 kg, 6 opakovani;
-  2. serie: 80 kg, 6 opakovani;
-  3. serie: 80 kg, 6 opakovani;
-Squat (nohy):
-  1. serie: 70 kg, 10 opakovani;
-  2. serie: 70 kg, 10 opakovani;
-  3. serie: 70 kg, 10 opakovani;
-Romanian Deadlift (nohy):
-  1. serie: 70 kg, 12 opakovani;
-  2. serie: 70 kg, 12 opakovani;
-  3. serie: 70 kg, 12 opakovani;
+=== WORKOUT 2 ===
+Pull Ups (záda):
+  1. serie: 110 kg, 6 opakovani
+  2. serie: 110 kg, 6 opakovani
+  3. serie: 110 kg, 4 opakovani
+Triceps Dip (triceps):
+  1. serie: 96 kg, 12 opakovani
+  2. serie: 96 kg, 12 opakovani
+  3. serie: 96 kg, 12 opakovani
