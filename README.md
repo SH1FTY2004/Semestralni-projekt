@@ -2,7 +2,7 @@
 
 Krátký popis
 
-Aplikace umožňuje vytvářet a spravovat databázi posilovacích cviků rozdělených podle svalových skupin. Uživatel si může zaznamenávat své tréninky, sledovat celkovou zvednutou váhu, počet sérií, výpočet objemu (volume) a odhadované 1RM (one-rep max) pro každý cvik. Program také ukládá osobní rekordy (achievements) a umožňuje jejich přepočet při odstranění nebo úpravě tréninků.
+Konzolová aplikace v C++ umožňuje vytvářet a spravovat databázi posilovacích cviků rozdělených podle svalových skupin. Uživatel si může zaznamenávat své tréninky, sledovat celkovou zvednutou váhu, počet sérií, výpočet objemu (volume) a odhadované 1RM (one-rep max) pro každý cvik. Program také ukládá osobní rekordy (achievements) a umožňuje jejich přepočet při odstranění nebo úpravě tréninků.
 
 Klíčové cíle a funkce
 1. Databáze cviků
