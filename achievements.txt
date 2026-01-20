@@ -1,10 +1,5 @@
 === Bench Press ===
-MaxWeight=120
-MaxVolume=1440
-1RM=168
-
-=== Pull Ups ===
-MaxWeight=140
-MaxVolume=1680
-1RM=196
+MaxWeight=90
+MaxVolume=450
+1RM=105
 

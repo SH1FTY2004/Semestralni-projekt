@@ -422,7 +422,7 @@ public:
 }
 
 
-    void saveToFile() const {
+    /*void saveToFile() const {
     string filename = "workouts.txt";
 
     int workoutNumber = countWorkoutsInFile(filename) + 1;
@@ -448,7 +448,64 @@ public:
 
     file.close();
     cout << "Workout #" << workoutNumber << " ulozen.\n\n";
+}*/
+void saveWorkoutToFile(const Workout& workout, const string& filename = "workouts.txt")
+{
+    ofstream out(filename, ios::app);
+    if (!out.is_open()) {
+        cout << "Nelze otevrit " << filename << "\n";
+        return;
+    }
+
+    int totalSets = 0;
+    int totalReps = 0;
+    float totalVolume = 0.0f;
+    float maxSingleSet = 0.0f;
+
+    static int workoutCounter = 1;
+    out << "=== WORKOUT " << workoutCounter++ << " ===\n";
+
+    
+    for (int i = 0; i < workout.getCount(); i++) {
+        const ExerciseEntry& entry = workout.getEntry(i);
+
+        out << entry.exercise.getName() << " (" 
+            << entry.exercise.getPrimary().name << "):\n";
+
+        
+        for (int s = 0; s < entry.sets; s++) {
+            float weight = entry.weight[s];
+            int reps = entry.reps[s];
+            float volume = weight * reps;
+
+            out << "  " << (s + 1) << ". serie: "
+                << weight << " kg, "
+                << reps << " reps, "
+                << "Volume=" << volume << "\n";
+
+            totalSets++;
+            totalReps += reps;
+            totalVolume += volume;
+
+            if (volume > maxSingleSet)
+                maxSingleSet = volume;
+        }
+        out << "\n";
+    }
+
+    // 🔹 STATS BLOK
+    out << "--- STATS ---\n";
+    out << "TotalSets=" << totalSets << "\n";
+    out << "TotalReps=" << totalReps << "\n";
+    out << "TotalVolume=" << totalVolume << "\n";
+    out << "MaxSingleSet=" << maxSingleSet << "\n";
+    out << "--------------\n\n";
+
+    out.close();
+
+    cout << "Workout ulozen do souboru s celkovymi stats.\n";
 }
+
 
 
     void createInteractive(ExerciseDatabase& db, const Measurements& user) {
@@ -827,7 +884,7 @@ while (choice != 0) {
                 w.print();
                 w.printStats();
                 rebuildAchievementsFromHistory();
-                w.saveToFile();
+                w.saveWorkoutToFile(w);
                 w.clear();
                 break;
             }
@@ -853,7 +910,7 @@ while (choice != 0) {
         }
         break;
     }
-
+    
     case 3:
         printAchievements();
         break;
