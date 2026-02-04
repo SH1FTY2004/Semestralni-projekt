@@ -1,19 +1,6 @@
 === WORKOUT 1 ===
 Bench Press (prsa):
   1. serie: 90 kg, 5 reps, Volume=450
-  2. serie: 5 kg, 90 reps, Volume=450
-  3. serie: 90 kg, 5 reps, Volume=450
-
---- STATS ---
-TotalSets=3
-TotalReps=100
-TotalVolume=1350
-MaxSingleSet=450
---------------
-
-=== WORKOUT 2 ===
-Bench Press (prsa):
-  1. serie: 90 kg, 5 reps, Volume=450
   2. serie: 90 kg, 5 reps, Volume=450
   3. serie: 90 kg, 5 reps, Volume=450
 
@@ -24,7 +11,7 @@ TotalVolume=1350
 MaxSingleSet=450
 --------------
 
-=== WORKOUT 1 ===
+=== WORKOUT 2 ===
 Bench Press (prsa):
   1. serie: 90 kg, 5 reps, Volume=450
   2. serie: 90 kg, 5 reps, Volume=450

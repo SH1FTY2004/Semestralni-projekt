@@ -3,3 +3,8 @@ MaxWeight=90
 MaxVolume=450
 1RM=105
 
+=== Pull Ups ===
+MaxWeight=110
+MaxVolume=660
+1RM=132
+
