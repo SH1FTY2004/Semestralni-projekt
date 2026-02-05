@@ -1,6 +1,16 @@
 #pragma once
 #include <string>
-#include "workout.h"
 
-// Přepočet a ukládání statistiky workoutu do souboru
-void saveWorkoutToFile(const Workout& workout, const std::string& filename = "workouts.txt");
+struct Achievement {
+    std::string exerciseName;
+    float maxWeight = 0;
+    float maxVolume = 0;
+    float oneRM = 0;
+};
+void rebuildAchievementsFromHistory(
+    const std::string& workoutsFile = "workouts.txt",
+    const std::string& achievementsFile = "achievements.txt"
+);
+
+void printAchievements(const std::string& filename = "achievements.txt");
+
