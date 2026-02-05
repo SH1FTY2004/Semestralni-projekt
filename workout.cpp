@@ -29,12 +29,33 @@ void Workout::print() const{
     }
 }
 
+int getLastWorkoutNumber(const string& filename)
+{
+    ifstream in(filename);
+    if (!in.is_open()) return 0;
+
+    string line;
+    int last = 0;
+
+    while (getline(in, line)) {
+        if (line.find("=== WORKOUT") != string::npos) {
+            int num;
+            sscanf(line.c_str(), "=== WORKOUT %d ===", &num);
+            if (num > last) last = num;
+        }
+    }
+
+    return last;
+}
+
+
 // ===== Uloží workout do souboru =====
 void Workout::saveWorkoutToFile(const Workout& workout, const string& filename){
+
+    int workoutCounter = getLastWorkoutNumber(filename) + 1;
     ofstream out(filename, ios::app);
     if(!out.is_open()){cout<<"Nelze otevrit "<<filename<<"\n"; return;}
 
-    static int workoutCounter=1;
     out<<"=== WORKOUT "<<workoutCounter++<<" ===\n";
 
     for(int i=0;i<workout.getCount();i++){
@@ -54,15 +75,27 @@ void Workout::saveWorkoutToFile(const Workout& workout, const string& filename){
 void Workout::createInteractive(ExerciseDatabase& db, const Measurements& user){
     while(true){
         string name;
-        cout<<"\nZadej nazev cviku (0 pro konec): ";
-        cin.ignore(numeric_limits<streamsize>::max(),'\n');
-        getline(cin,name);
-        if(name=="0") break;
+            Exercise* e = nullptr;
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            while (true) {
+                cout << "\nZadej nazev cviku (0 pro konec): ";
+                getline(cin, name);
 
-        Exercise* e = db.findByName(name);
-        if(!e){cout<<"Cvik nenalezen!\n"; continue;}
+                if (name == "0")
+                    break;
 
-        ExerciseEntry entry; entry.exercise = *e;
+                e = db.findByName(name);
+                if (e != nullptr)
+                    break;
+
+                cout << "Cvik nenalezen! Zkus to znovu.\n";
+            }
+
+            if (name == "0") break;   // ukončí vnější smyčku
+
+
+        ExerciseEntry entry; 
+        entry.exercise = *e;
         cout<<"Pocet serii: "; cin>>entry.sets;
         if(entry.sets>20) entry.sets=20;
 

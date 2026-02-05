@@ -1,10 +1,15 @@
-=== Bench Press ===
+=== Bench Press (prsa) ===
 MaxWeight=90
 MaxVolume=450
 1RM=105
 
-=== Pull Ups ===
+=== Pull Ups (záda) ===
 MaxWeight=110
 MaxVolume=660
 1RM=132
+
+=== Triceps Dip (triceps) ===
+MaxWeight=110
+MaxVolume=1100
+1RM=146.667
 
