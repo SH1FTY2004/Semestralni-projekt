@@ -12,26 +12,33 @@
 #include <sstream>
 using namespace std;
 
+// ===== Spočítá počet workoutů v souboru =====
 int countWorkoutsInFile(const string& filename) {
     ifstream file(filename);
-    if (!file.is_open()) return 0;
+    if (!file.is_open()) return 0; // pokud se soubor nepodaří otevřít, vrátí 0
 
     string line;
     int count = 0;
+
+    // Procházení souboru a hledání řádků obsahujících "=== WORKOUT"
     while (getline(file, line)) {
         if (line.find("=== WORKOUT") != string::npos)
             count++;
     }
+
     file.close();
-    return count;
+    return count; // vrátí celkový počet workoutů
 }
 
+// ===== Uloží tělesné údaje do souboru =====
 void saveMeasurements(const Measurements& m) {
     ofstream file("measurements.txt");
     if (!file.is_open()) {
         cout << "Nelze otevrit measurements.txt\n";
         return;
     }
+
+    // Uloží jednotlivé hodnoty do souboru
     file << "weight=" << m.weight << "\n";
     file << "height=" << m.height << "\n";
     file << "age=" << m.age << "\n";
@@ -39,21 +46,28 @@ void saveMeasurements(const Measurements& m) {
     file << "waist=" << m.waist << "\n";
     file << "arms=" << m.arms << "\n";
     file << "thighs=" << m.thighs << "\n";
+
     file.close();
 }
 
+// ===== Načte tělesné údaje ze souboru =====
 void loadMeasurements(Measurements& m) {
     ifstream file("measurements.txt");
     if (!file.is_open()) {
+        // Pokud soubor neexistuje, nastavíme všechny hodnoty na nulu
         m = {0,0,0,0,0,0,0};
         return;
     }
+
     string line;
     while (getline(file, line)) {
         size_t pos = line.find('=');
-        if (pos == string::npos) continue;
-        string key = line.substr(0,pos);
-        string value = line.substr(pos+1);
+        if (pos == string::npos) continue; // ignorujeme špatně formátované řádky
+
+        string key = line.substr(0,pos);     // klíč (např. weight)
+        string value = line.substr(pos+1);   // hodnota
+
+        // Podle klíče nastavíme odpovídající pole v Measurements
         if(key=="weight") m.weight=stof(value);
         else if(key=="height") m.height=stoi(value);
         else if(key=="age") m.age=stoi(value);
@@ -62,11 +76,14 @@ void loadMeasurements(Measurements& m) {
         else if(key=="arms") m.arms=stof(value);
         else if(key=="thighs") m.thighs=stof(value);
     }
+
     file.close();
 }
 
+// ===== Interaktivní správa tělesných údajů =====
 void manageMeasurements(Measurements& m) {
-    loadMeasurements(m);
+    loadMeasurements(m); // načteme aktuální hodnoty
+
     int volba=-1;
     cout << "\nAktualni telesne udaje:\n";
     cout << "Vaha (kg): " << m.weight << "\n";
@@ -85,7 +102,10 @@ void manageMeasurements(Measurements& m) {
         return;
     }
 
-    float inputFloat; int inputInt;
+    float inputFloat; 
+    int inputInt;
+
+    // Interaktivní zadání nových hodnot, pokud uživatel zadá 0, hodnota zůstane
     cout << "Vaha (kg): "; cin >> inputFloat; if(inputFloat!=0)m.weight=inputFloat;
     cout << "Vyska (cm): "; cin >> inputInt; if(inputInt!=0)m.height=inputInt;
     cout << "Vek: "; cin >> inputInt; if(inputInt!=0)m.age=inputInt;
@@ -94,6 +114,6 @@ void manageMeasurements(Measurements& m) {
     cout << "Ruce (cm): "; cin >> inputFloat; if(inputFloat!=0)m.arms=inputFloat;
     cout << "Stehna (cm): "; cin >> inputFloat; if(inputFloat!=0)m.thighs=inputFloat;
 
-    saveMeasurements(m);
+    saveMeasurements(m); // uložíme nové hodnoty
     cout << "Telesne udaje ulozeny.\n\n";
 }

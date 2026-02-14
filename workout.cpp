@@ -10,29 +10,36 @@
 #include <limits>
 #include <map>
 #include <sstream>
+
 using namespace std;
 
 // ===== Přidání cviku do workoutu =====
 void Workout::addExercise(const ExerciseEntry& entry){
+    // Pokud je prostor, přidáme cvik do pole entries
     if(count<20) entries[count++]=entry;
-    else cout<<"Workout je plny.\n";
+    else cout<<"Workout je plny.\n"; // maximální počet cviků v jednom workoutu je 20
 }
 
 // ===== Výpis workoutu =====
 void Workout::print() const{
     if(count==0){cout<<"Workout je prazdny.\n"; return;}
     cout<<"\n=== WORKOUT ===\n";
+
     for(int i=0;i<count;i++){
+        // Název cviku + primární sval
         cout<<"- "<<entries[i].exercise.getName()<<" ("<<entries[i].exercise.getPrimary().name<<")\n";
+
+        // Výpis všech sérií u tohoto cviku
         for(int s=0;s<entries[i].sets;s++)
             cout<<"  "<<s+1<<". serie: "<<entries[i].weight[s]<<" kg, "<<entries[i].reps[s]<<" opakovani\n\n";
     }
 }
 
+// ===== Získání čísla posledního workoutu v souboru =====
 int getLastWorkoutNumber(const string& filename)
 {
     ifstream in(filename);
-    if (!in.is_open()) return 0;
+    if (!in.is_open()) return 0; // pokud soubor neexistuje, vrátíme 0
 
     string line;
     int last = 0;
@@ -40,7 +47,7 @@ int getLastWorkoutNumber(const string& filename)
     while (getline(in, line)) {
         if (line.find("=== WORKOUT") != string::npos) {
             int num;
-            sscanf(line.c_str(), "=== WORKOUT %d ===", &num);
+            sscanf(line.c_str(), "=== WORKOUT %d ===", &num); // načteme číslo workoutu
             if (num > last) last = num;
         }
     }
@@ -48,21 +55,23 @@ int getLastWorkoutNumber(const string& filename)
     return last;
 }
 
-
 // ===== Uloží workout do souboru =====
 void Workout::saveWorkoutToFile(const Workout& workout, const string& filename){
-
+    // zjistíme číslo nového workoutu
     int workoutCounter = getLastWorkoutNumber(filename) + 1;
     ofstream out(filename, ios::app);
     if(!out.is_open()){cout<<"Nelze otevrit "<<filename<<"\n"; return;}
 
+    // Zápis hlavičky workoutu
     out<<"=== WORKOUT "<<workoutCounter++<<" ===\n";
 
+    // Pro každý cvik vypíšeme jeho název a série
     for(int i=0;i<workout.getCount();i++){
         const ExerciseEntry& entry = workout.getEntry(i);
-        out<<entry.exercise.getName()<<" ("<<entry.exercise.getPrimary().name<<"):\n";
+        out<<entry.exercise.getName()<<":\n";
+
         for(int s=0;s<entry.sets;s++){
-            float volume = entry.weight[s]*entry.reps[s];
+            float volume = entry.weight[s]*entry.reps[s]; // objem série
             out<<"  "<<s+1<<". serie: "<<entry.weight[s]<<" kg, "<<entry.reps[s]<<" reps, Volume="<<volume<<"\n";
         }
         out<<"\n";
@@ -75,29 +84,32 @@ void Workout::saveWorkoutToFile(const Workout& workout, const string& filename){
 void Workout::createInteractive(ExerciseDatabase& db, const Measurements& user){
     while(true){
         string name;
-            Exercise* e = nullptr;
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            while (true) {
-                cout << "\nZadej nazev cviku (0 pro konec): ";
-                getline(cin, name);
+        Exercise* e = nullptr;
 
-                if (name == "0")
-                    break;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // vyčistí buffer po předchozím vstupu
 
-                e = db.findByName(name);
-                if (e != nullptr)
-                    break;
+        while (true) {
+            cout << "\nZadej nazev cviku (0 pro konec): ";
+            getline(cin, name);
 
-                cout << "Cvik nenalezen! Zkus to znovu.\n";
-            }
+            if (name == "0") // ukončení přidávání cviků
+                break;
 
-            if (name == "0") break;   // ukončí vnější smyčku
+            e = db.findByName(name); // hledáme cvik v databázi
+            if (e != nullptr)
+                break;
 
+            cout << "Cvik nenalezen! Zkus to znovu.\n";
+        }
+
+        if (name == "0") break;   // ukončí vnější smyčku
 
         ExerciseEntry entry; 
         entry.exercise = *e;
+
+        // Zadání počtu sérií
         cout<<"Pocet serii: "; cin>>entry.sets;
-        if(entry.sets>20) entry.sets=20;
+        if(entry.sets>20) entry.sets=20; // max 20 sérií
 
         float addWeight=0.0f;
         bool bodyweightExercise = (name=="Pull Ups" || name=="Triceps Dip");
@@ -106,6 +118,7 @@ void Workout::createInteractive(ExerciseDatabase& db, const Measurements& user){
             cout<<"Zadej pridavnou vahu (0 pokud zadna): "; cin>>addWeight;
         }
 
+        // Zadání vah a opakování pro každou sérii
         for(int s=0;s<entry.sets;s++){
             cout<<s+1<<". serie:\n";
             if(!bodyweightExercise){cout<<"Vaha (kg): "; cin>>entry.weight[s];}
@@ -122,9 +135,15 @@ void Workout::createInteractive(ExerciseDatabase& db, const Measurements& user){
 void Workout::printStats() const{
     if(count==0){cout<<"Workout je prazdny.\n"; return;}
 
-    string muscles[50]; float totalWeight[50]={0}; int totalSets[50]={0}; int muscleCount=0;
-    float workoutTotalWeight=0; int workoutTotalSets=0;
+    // Pole pro jednotlivé svaly a statistiky
+    string muscles[50]; 
+    float totalWeight[50]={0}; 
+    int totalSets[50]={0}; 
+    int muscleCount=0;
+    float workoutTotalWeight=0; 
+    int workoutTotalSets=0;
 
+    // Pro každý cvik ve workoutu
     for(int i=0;i<count;i++){
         const ExerciseEntry& e=entries[i];
         string muscleName = e.exercise.getPrimary().name;
@@ -133,11 +152,16 @@ void Workout::printStats() const{
         for(int j=0;j<muscleCount;j++) if(muscles[j]==muscleName){index=j; break;}
         if(index==-1){index=muscleCount; muscles[muscleCount++]=muscleName;}
 
-        totalSets[index]+=e.sets; workoutTotalSets+=e.sets;
-        float lifted=0; for(int s=0;s<e.sets;s++) lifted+=e.weight[s]*e.reps[s];
-        totalWeight[index]+=lifted; workoutTotalWeight+=lifted;
+        totalSets[index]+=e.sets; 
+        workoutTotalSets+=e.sets;
+
+        float lifted=0; 
+        for(int s=0;s<e.sets;s++) lifted+=e.weight[s]*e.reps[s]; // celková váha zvednutá v sérii
+        totalWeight[index]+=lifted; 
+        workoutTotalWeight+=lifted;
     }
 
+    // Výpis statistik po svalových skupinách
     cout<<"\n=== STATISTIKY WORKOUTU ===\n";
     for(int i=0;i<muscleCount;i++){
         cout<<muscles[i]<<":\n  Serie: "<<totalSets[i]<<"\n  Zvednuto: "<<totalWeight[i]<<" kg\n\n";
@@ -148,14 +172,16 @@ void Workout::printStats() const{
 // ===== Vymazání workoutu =====
 void Workout::clear(){count=0;}
 
+// ===== Odstranění workoutu ze souboru =====
 void Workout::deleteWorkoutByNumber(int number, const string& filename){
     ifstream file(filename);
     if(!file.is_open()){cout<<"Soubor s treninky neexistuje.\n"; return;}
 
     vector<string> lines; string line;
-    while(getline(file,line)) lines.push_back(line);
+    while(getline(file,line)) lines.push_back(line); // uložíme všechny řádky do paměti
     file.close();
 
+    // Najdeme indexy začátků workoutů
     vector<int> workoutStartIndices;
     for(size_t i=0;i<lines.size();i++) if(lines[i].find("=== WORKOUT")!=string::npos) workoutStartIndices.push_back(i);
 
@@ -163,12 +189,14 @@ void Workout::deleteWorkoutByNumber(int number, const string& filename){
 
     int start=workoutStartIndices[number-1];
     int end = (number<workoutStartIndices.size()) ? workoutStartIndices[number] : lines.size();
-    lines.erase(lines.begin()+start, lines.begin()+end);
+    lines.erase(lines.begin()+start, lines.begin()+end); // odstraníme vybraný workout
 
+    // Přepočítáme čísla workoutů
     int workoutCounter=1;
     for(size_t i=0;i<lines.size();i++)
         if(lines[i].find("=== WORKOUT")!=string::npos) lines[i]="=== WORKOUT "+to_string(workoutCounter++)+" ===";
 
+    // Uložíme zpět do souboru
     ofstream out(filename);
     for(const string& l: lines) out<<l<<"\n";
     out.close();
@@ -187,5 +215,3 @@ void Workout::printHistory(const string& filename){
     cout<<"\n========================\n";
     file.close();
 }
-
-

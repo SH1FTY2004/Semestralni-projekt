@@ -2,9 +2,6 @@
 #include <string>
 using namespace std;
 
-// =========================
-// Muscle
-// =========================
 struct Muscle {
-    string name;
+    string name;    // název svalu (např. "prsa", "záda", "triceps")
 };
