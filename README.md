@@ -1,60 +1,232 @@
-# Semestralni-projekt
+# 🏋️ Workout Tracker – Konzolová C++ aplikace
 
-Krátký popis
+## 📌 Přehled projektu
 
-Konzolová aplikace v C++ umožňuje vytvářet a spravovat databázi posilovacích cviků rozdělených podle svalových skupin. Uživatel si může zaznamenávat své tréninky, sledovat celkovou zvednutou váhu, počet sérií, výpočet objemu (volume) a odhadované 1RM (one-rep max) pro každý cvik. Program také ukládá osobní rekordy (achievements) a umožňuje jejich přepočet při odstranění nebo úpravě tréninků.
+Workout Tracker je konzolová aplikace napsaná v jazyce C++, která slouží k evidenci silových tréninků, cviků a tělesných údajů uživatele. Program umožňuje vytvářet tréninky, ukládat jejich historii do souboru, vyhodnocovat nejlepší výkony (achievements) a spravovat databázi cviků podle svalových skupin.
 
-Klíčové cíle a funkce
-1. Databáze cviků
+Aplikace je navržena bez použití dynamických kontejnerů (např. `vector`) pro hlavní datové struktury — používá pevná pole a práci se soubory. Je tedy vhodná jako semestrální / zápočtový projekt pro procvičení:
 
-Cviky lze přidávat, odstraňovat a prohlížet podle svalových skupin (prsa, záda, nohy, ruce, ramena).
+* práce se třídami
+* práce se soubory
+* parsování textových dat
+* strukturovaný návrh programu
+* menu-driven CLI aplikace
+* základní statistické výpočty
 
-Každý cvik má primární svalovou skupinu a až 5 sekundárních svalů.
+---
 
-Databáze se ukládá do souboru exercise.txt a načítá při startu programu.
+## ⚙️ Funkce aplikace
 
-2. Zadávání a správa tréninků
+### ✅ Správa cviků
 
-Uživatel může vytvořit trénink složený z několika cviků.
+* načtení cviků ze souboru
+* rozdělení podle primárního svalu
+* přidání nového cviku interaktivně
+* odstranění cviku
+* vyhledání historie konkrétního cviku
+* podpora sekundárních svalů
 
-Zadává počet sérií, váhu a počet opakování pro každou sérii.
+---
 
-Aplikace podporuje cviky s vlastní vahou (např. pull-ups) a umožňuje přidat přídavnou váhu.
+### 🏋️ Tréninky
 
-Tréninky se ukládají do souboru workouts.txt.
+* vytvoření workoutu krok za krokem
+* přidávání cviků do tréninku
+* zadání sérií, vah a opakování
+* podpora cviků s vlastní vahou těla (např. shyby, dipy)
+* automatický výpočet:
 
-Každý trénink automaticky počítá a ukládá statistiky:
+  * objemu série (váha × opakování)
+  * celkového objemu tréninku
+* uložení workoutu do souboru
+* výpis historie tréninků
+* mazání workoutu podle čísla
 
-Celkový počet sérií
+---
 
-Celkový počet opakování
+### 🏆 Nejlepší výkony (Achievements)
 
-Celkový objem (váha × opakování)
+Program z historie tréninků automaticky přepočítává statistiky pro každý cvik:
 
-Největší objem v jedné sérii
+* maximální zvednutá váha
+* maximální objem jedné série
+* odhad 1RM (Epley formule)
 
-3. Výpočet 1RM a osobních rekordů
+Vzorec:
 
-Aplikace počítá odhadované 1RM (Epleyho vzorec) pro každou sérii.
+```
+1RM = váha × (1 + opakování / 30)
+```
 
-Sleduje max. zvednutou váhu, max. objem a 1RM pro jednotlivé cviky.
+Achievements se ukládají do samostatného souboru a lze je kdykoliv znovu přegenerovat z historie.
 
-Rekordy se ukládají do souboru achievements.txt.
+---
 
-Funkce rebuildAchievementsFromHistory() umožňuje přepočítat všechny rekordy, např. po smazání tréninku.
+### 📏 Tělesné údaje uživatele
 
-4. Historie a správa
+Program umožňuje ukládat a spravovat:
 
-Zobrazení historie všech tréninků s podrobnými informacemi o cvicích, sériích, váze a počtu opakování.
+* váhu
+* výšku
+* věk
+* obvod hrudníku
+* obvod pasu
+* obvod paží
+* obvod stehen
 
-Odstranění konkrétního tréninku s automatickým přečíslováním zbytku historie.
+Tyto údaje se používají například u cviků s vlastní vahou.
 
-Přepočet achievements po smazání tréninku.
+---
 
-5. Nastavení tělesných údajů
+## 📂 Struktura souborů
 
-Uživatel může zadat a aktualizovat své tělesné údaje: váhu, výšku, věk, obvod hrudníku, pasu, rukou a stehen.
+```
+exercise.h / exercise.cpp
+→ definice cviku
 
-Tyto údaje se využívají pro cviky s vlastní vahou.
+exercise_database.h / .cpp
+→ databáze cviků
 
-Data se ukládají do souboru measurements.txt.
+workout.h / .cpp
+→ workout a jeho logika
+
+measurements.h / .cpp
+→ tělesné údaje
+
+utils.h / .cpp
+→ achievements + pomocné funkce
+
+main.cpp
+→ hlavní menu aplikace
+```
+
+---
+
+## 💾 Používané datové soubory
+
+### exercise.txt
+
+Databáze cviků a svalových skupin.
+
+---
+
+### workouts.txt
+
+Historie všech uložených tréninků:
+
+```
+=== WORKOUT 3 ===
+Bench Press:
+  1. serie: 80 kg, 5 reps, Volume=400
+```
+
+---
+
+### achievements.txt
+
+Automaticky generované nejlepší výkony:
+
+```
+=== Bench Press ===
+MaxWeight=100
+MaxVolume=500
+1RM=116.6
+```
+
+---
+
+### measurements.txt
+
+Tělesné údaje uživatele ve formátu klíč=hodnota.
+
+---
+
+## 🧠 Architektura programu
+
+Program je rozdělen do samostatných modulů:
+
+* **Exercise** — reprezentuje cvik
+* **ExerciseDatabase** — správa všech cviků
+* **Workout** — jeden trénink
+* **ExerciseEntry** — cvik uvnitř workoutu
+* **Measurements** — tělesná data
+* **Achievement** — statistiky výkonu
+
+Používá se:
+
+* OOP návrh
+* zapouzdření
+* práce s referencemi
+* práce s konstantními metodami
+* oddělení rozhraní (.h) a implementace (.cpp)
+
+---
+
+## ▶️ Ovládání programu
+
+Hlavní menu:
+
+```
+[1] Cviky
+[2] Treninky
+[3] Nejlepsi vykony
+[4] Nastaveni telesnych udaju
+[0] Konec
+```
+
+Podmenu obsahují další interaktivní volby.
+
+---
+
+## 🧮 Výpočty
+
+Program počítá:
+
+* objem série
+* objem cviku
+* objem podle svalových skupin
+* celkový objem workoutu
+* 1RM odhad
+* maxima napříč historií
+
+---
+
+## 🚫 Omezení
+
+* pevné velikosti polí (max počty):
+
+  * 200 cviků
+  * 20 cviků ve workoutu
+  * 20 sérií na cvik
+* textový formát souborů → závislost na správném zápisu
+* bez GUI — pouze konzole
+* bez databáze — pouze textové soubory
+
+---
+
+## 🎯 Vhodné pro
+
+* zápočtový / semestrální projekt
+* procvičení C++
+* práci se soubory
+* parsování textu
+* menu aplikace
+* OOP návrh
+
+---
+
+## 🔧 Možná rozšíření
+
+* grafické rozhraní
+* grafy progresu
+* export do CSV
+* filtrování podle svalů
+* historie podle data
+* trend výkonu
+* validace vstupů
+* dynamické kontejnery
+* testy
+
+---
+
+

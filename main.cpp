@@ -17,7 +17,7 @@ int main() {
     ExerciseDatabase db;     // Objekt pro správu databáze cviků
     db.loadFromFile("exercise.txt"); // Načtení cviků ze souboru
     int choice = -1;         // Proměnná pro volbu v menu
-
+    
     // Hlavní smyčka programu, běží dokud uživatel nezvolí 0
     while (choice != 0) {
         cout << "\n=== HLAVNI MENU ===\n";
@@ -85,8 +85,8 @@ int main() {
                     w.createInteractive(db, user); // Vytvoření tréninku interaktivně
                     w.print();               // Vypíše právě vytvořený trénink
                     w.printStats();          // Vypíše statistiky tréninku
-                    rebuildAchievementsFromHistory(); // Přepočítání achievements z historie
                     w.saveWorkoutToFile(w);  // Uloží trénink do souboru
+                    rebuildAchievementsFromHistory(); // Přepočítání achievements z historie
                     w.clear();               // Vyčistí objekt tréninku
                     break;
                 }
@@ -121,7 +121,7 @@ int main() {
         // ===== NASTAVENI TELESNYCH UDAJU =====
         case 4: {
             Measurements m;        // Objekt pro zadání údajů
-            manageMeasurements(m); // Interaktivní správa údajů (hmotnost, výška, ...)
+            manageMeasurements(m); // Správa údajů (hmotnost, výška, ...)
             break;
         }
 
